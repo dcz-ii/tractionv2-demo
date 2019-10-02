@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { TractionContent } from 'tt-frontend-components';
+import { useSubscription } from "react-apollo-hooks";
+import gql from "graphql-tag";
 
 import './App.css';
 import Home from './pages/Home';
@@ -10,10 +11,29 @@ function App(props) {
   useEffect(() => {
     props.getData();
   }, [])
+
+  const NEW_USER_SUB = gql`subscription {
+    newUser {
+      id
+      username
+      firstLetterOfUsername
+      todo {
+        task
+        completed
+      }
+    }
+  }`
+
+  const { data, loading } = useSubscription(
+    NEW_USER_SUB
+  );
+
+  console.log(loading)
+
   return (
     <div className="App">
-     <TractionContent ttContent='asdfadfa' />                
      <Home />
+      {loading ? '...' :  data}
     </div>
   );
 }
